@@ -1,0 +1,116 @@
+.home-container {
+    padding-top: 100px;
+    /* Offset for fixed navbar */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 4rem;
+}
+
+.hero-section {
+    text-align: center;
+    width: 100%;
+    max-width: 1600px;
+    padding: 0 2rem;
+    margin: 0 auto 6rem auto;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.text-accent-cyan {
+    color: var(--accent-cyan);
+}
+
+.hero-title {
+    font-size: clamp(4.5rem, 10vw, 7rem);
+    /* Huge scaling font */
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    text-shadow: 0 0 40px rgba(138, 43, 226, 0.4);
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    max-width: 1000px;
+    /* Wider subtitle */
+    margin: 0 auto 3rem auto;
+    line-height: 1.6;
+}
+
+.btn-large {
+    padding: 1rem 2.5rem;
+    font-size: 1.125rem;
+    border-radius: 12px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 4rem;
+    max-width: 1800px;
+    width: 100%;
+    padding: 0 4rem;
+}
+
+.feature-card {
+    padding: 3.5rem;
+    text-align: center;
+    transition: transform var(--transition-normal);
+    background: linear-gradient(160deg, rgba(30, 30, 50, 0.6), rgba(20, 20, 35, 0.8));
+    /* Gradient to card */
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+}
+
+.feature-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.feature-icon {
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+.text-primary-light {
+    color: var(--primary-light);
+}
+
+.feature-card h3 {
+    font-size: 2.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    line-height: 1.6;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

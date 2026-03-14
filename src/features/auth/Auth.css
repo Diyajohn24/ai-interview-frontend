@@ -1,0 +1,192 @@
+.auth-container {
+    padding-top: 100px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 4rem;
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 1200px;
+    /* Big Width */
+    padding: 5rem;
+    margin: 0 2rem;
+    background: linear-gradient(145deg, rgba(20, 20, 35, 0.9), rgba(10, 10, 20, 0.95));
+    /* New Gradient */
+    border: 1px solid var(--glass-border-highlight);
+    box-shadow: 0 0 40px rgba(138, 43, 226, 0.15);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-title {
+    font-size: 4.5rem;
+    /* Massive Font Size */
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--primary-light), var(--accent-pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.auth-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    /* Increased size */
+    margin-bottom: 3.5rem;
+    text-align: center;
+}
+
+.role-options {
+    display: flex;
+    flex-direction: row;
+    /* Side by side on full width */
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.role-card {
+    flex: 1;
+    /* Take equal width */
+    display: flex;
+    flex-direction: column;
+    /* Stack vertically for larger cards */
+    align-items: flex-start;
+    padding: 2.5rem;
+    gap: 1.5rem;
+    text-align: left;
+    cursor: pointer;
+    background: rgba(20, 20, 35, 0.5);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal);
+}
+
+.role-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--glass-border-highlight);
+    box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
+}
+
+.role-card:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    width: auto;
+    bottom: auto;
+    background: var(--primary-glow);
+}
+
+.role-card:last-child:hover::before {
+    background: var(--accent-cyan);
+}
+
+.role-icon-wrapper {
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.4);
+    margin-bottom: 1rem;
+}
+
+.seeker-icon {
+    color: var(--primary-light);
+}
+
+.hirer-icon {
+    color: var(--accent-cyan);
+}
+
+.role-card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    /* Massive size */
+}
+
+.role-card p {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    /* Larger font */
+    margin: 0;
+    line-height: 1.5;
+}
+
+.role-arrow {
+    margin-left: auto;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all var(--transition-normal);
+}
+
+.role-card:hover .role-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Forms */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.glass-input {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    transition: all var(--transition-fast);
+}
+
+.glass-input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.btn-full {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+.auth-footer {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
