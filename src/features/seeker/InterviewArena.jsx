@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mic, MicOff, Video, VideoOff, PhoneOff, MessageSquare, Play, RefreshCw, Download } from 'lucide-react';
+import { Mic, MicOff, Video, VideoOff, PhoneOff, MessageSquare, Play, Download } from 'lucide-react';
+import { startInterview, submitAnswer } from '../../api';
 import './InterviewArena.css';
 
 const InterviewArena = () => {
@@ -11,40 +12,73 @@ const InterviewArena = () => {
         { speaker: 'System', text: 'Initializing AI Avatar Interview...', time: '00:00' }
     ]);
     const [isFinished, setIsFinished] = useState(false);
+    const [report, setReport] = useState(null);
+    const [interviewId, setInterviewId] = useState(null);
+    const [conversation, setConversation] = useState([]);
+    const [currentQuestion, setCurrentQuestion] = useState('');
+    const [answer, setAnswer] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Simulated interview progression
-    useEffect(() => {
-        if (!isStarted || isFinished) return;
-
-        const timer1 = setTimeout(() => {
-            setTranscript(prev => [...prev, { speaker: 'AI', text: 'Hello Alex. I am Aureeture AI. Thank you for taking the time to interview today for the Frontend Developer role. Shall we begin with your background?', time: '00:05' }]);
-        }, 2000);
-
-        const timer2 = setTimeout(() => {
-            setTranscript(prev => [...prev, { speaker: 'You', text: 'Yes, absolutely. I have over 4 years of experience building React applications...', time: '00:15' }]);
-        }, 8000);
-
-        // End simulation early for demo purposes
-        const timer3 = setTimeout(() => {
-            setIsFinished(true);
-        }, 12000);
-
-        return () => {
-            clearTimeout(timer1);
-            clearTimeout(timer2);
-            clearTimeout(timer3);
-        };
-    }, [isStarted, isFinished]);
-
-    const endCall = () => {
-        // Return to dashboard or show report
-        navigate('/seeker/dashboard');
+    const now = () => {
+        const d = new Date();
+        return `${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
     };
 
-    const startCall = () => {
-        setIsStarted(true);
+    const handleStart = async () => {
+        setLoading(true);
+        try {
+            // Customize these values or later pull from user profile
+            const data = await startInterview("Candidate", "Frontend Developer", "Sample resume text");
+            setInterviewId(data.interviewId);
+            setConversation(data.conversation || []);
+            setCurrentQuestion(data.question);
+            setTranscript(prev => [...prev,
+                { speaker: 'AI', text: data.question, time: now() }
+            ]);
+            setIsStarted(true);
+        } catch (e) {
+            setTranscript(prev => [...prev,
+                { speaker: 'System', text: 'Failed to connect to backend. Is it running?', time: now() }
+            ]);
+        }
+        setLoading(false);
     };
+
+    const handleSubmitAnswer = async () => {
+        if (!answer.trim()) return;
+        setLoading(true);
+
+        setTranscript(prev => [...prev,
+            { speaker: 'You', text: answer, time: now() }
+        ]);
+
+        try {
+            const data = await submitAnswer(interviewId, conversation, answer);
+            setAnswer('');
+
+            if (data.status === 'completed') {
+                setReport(data.report);
+                setIsFinished(true);
+                setTranscript(prev => [...prev,
+                    { speaker: 'AI', text: 'Interview complete! Your report is ready.', time: now() }
+                ]);
+            } else {
+                setConversation(data.conversation || []);
+                setCurrentQuestion(data.question);
+                setTranscript(prev => [...prev,
+                    { speaker: 'AI', text: data.question, time: now() }
+                ]);
+            }
+        } catch (e) {
+            setTranscript(prev => [...prev,
+                { speaker: 'System', text: 'Error submitting answer.', time: now() }
+            ]);
+        }
+        setLoading(false);
+    };
+
+    const endCall = () => navigate('/seeker/dashboard');
 
     return (
         <div className="arena-wrapper">
@@ -52,26 +86,23 @@ const InterviewArena = () => {
                 <div className="lobby-container glass-panel fade-in">
                     <h2>Ready to Begin?</h2>
                     <p className="text-muted">Ensure your camera and microphone are working. You will have 30 minutes to complete this technical interview.</p>
-
                     <div className="device-preview">
                         <div className="camera-box">
                             <Video size={48} className="text-secondary opacity-50" />
                             <span>Camera Preview</span>
                         </div>
                     </div>
-
-                    <button className="btn btn-primary btn-large mt-4" onClick={startCall}>
-                        <Play size={20} /> Join Session
+                    <button className="btn btn-primary btn-large mt-4" onClick={handleStart} disabled={loading}>
+                        <Play size={20} /> {loading ? 'Connecting...' : 'Join Session'}
                     </button>
                 </div>
             ) : (
                 <div className="arena-grid fade-in">
-                    {/* Main Video Area (The AI Avatar) */}
                     <div className="main-video-feed glass-panel">
                         <div className="avatar-placeholder text-glow">
                             <div className="pulse-circle"></div>
                             <h3>Aureeture AI</h3>
-                            <p>Speaking...</p>
+                            <p>{loading ? 'Thinking...' : 'Speaking...'}</p>
                         </div>
 
                         <div className="floating-user-cam">
@@ -91,7 +122,6 @@ const InterviewArena = () => {
                         </div>
                     </div>
 
-                    {/* Sidebar / Tools */}
                     <div className="arena-sidebar">
                         <div className="transcript-panel glass-panel">
                             <div className="panel-header">
@@ -106,16 +136,38 @@ const InterviewArena = () => {
                                     </div>
                                 ))}
                             </div>
+
+                            {!isFinished && (
+                                <div className="answer-input-area" style={{padding: '12px', borderTop: '1px solid rgba(255,255,255,0.1)'}}>
+                                    <textarea
+                                        className="glass-input"
+                                        style={{width: '100%', minHeight: '80px', marginBottom: '8px', resize: 'vertical'}}
+                                        placeholder="Type your answer here..."
+                                        value={answer}
+                                        onChange={(e) => setAnswer(e.target.value)}
+                                        disabled={loading}
+                                    />
+                                    <button
+                                        className="btn btn-primary btn-full"
+                                        onClick={handleSubmitAnswer}
+                                        disabled={loading || !answer.trim()}
+                                    >
+                                        {loading ? 'Submitting...' : 'Submit Answer'}
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {isFinished && (
                             <div className="report-panel glass-panel fade-in">
                                 <h3 className="text-accent-cyan mb-2">Interview Complete</h3>
                                 <p className="text-sm text-secondary mb-4">Your AI evaluation report is ready.</p>
-                                <div className="score-overview mb-4">
-                                    <span className="score-big">92</span>
-                                    <span className="text-muted">/ 100</span>
-                                </div>
+                                {report && (
+                                    <div className="score-overview mb-4">
+                                        <span className="score-big">{report.score ?? '—'}</span>
+                                        <span className="text-muted">/ 100</span>
+                                    </div>
+                                )}
                                 <button className="btn btn-primary btn-full mb-2">
                                     <Download size={18} /> Download Full PDF Report
                                 </button>
